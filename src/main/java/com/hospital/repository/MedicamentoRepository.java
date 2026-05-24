@@ -1,6 +1,7 @@
 package com.hospital.repository;
 
-import com.hospital.model.Medicamento;
+import java.util.List;
+import java.util.Optional;
 
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
@@ -8,8 +9,7 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Repository;
 
-import java.util.List;
-import java.util.Optional;
+import com.hospital.model.Medicamento;
 
 @Repository
 public class MedicamentoRepository {
@@ -39,7 +39,7 @@ public class MedicamentoRepository {
         return m;
     };
 
-    // Lisatr todos los medicamentos
+    // Listar todos los medicamentos
     public List<Medicamento> findAll() {
 
         String sql = "SELECT * FROM medicamento ORDER BY id";

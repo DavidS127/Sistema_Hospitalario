@@ -32,7 +32,7 @@ public class ProcedimientoRepository {
 
         p.setId(rs.getInt("id"));
         p.setNombre(rs.getString("nombre"));
-        p.setIdConsultaMedica(rs.getInt("id_consulta_medica"));
+        p.setIdConsultaMedica(rs.getInt("id_consultamedica"));
 
         return p;
     };
@@ -75,7 +75,7 @@ public class ProcedimientoRepository {
 
         String sql = "INSERT INTO procedimiento ("
                 + "nombre, "
-                + "id_consulta_medica"
+                + "id_consultamedica"
                 + ") VALUES ("
                 + ":nombre, "
                 + ":idConsultaMedica"
@@ -97,7 +97,7 @@ public class ProcedimientoRepository {
 
         String sql = "UPDATE procedimiento "
                 + "SET nombre = :nombre, "
-                + "id_consulta_medica = :idConsultaMedica "
+                + "id_consultamedica = :idConsultaMedica "
                 + "WHERE id = :id";
 
         MapSqlParameterSource params = new MapSqlParameterSource()

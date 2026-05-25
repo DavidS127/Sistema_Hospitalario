@@ -32,7 +32,7 @@ public class TratamientoRepository {
 
         t.setId(rs.getInt("id"));
         t.setDescripcion(rs.getString("descripcion"));
-        t.setIdConsultaMedica(rs.getInt("id_consulta_medica"));
+        t.setIdConsultaMedica(rs.getInt("id_consultamedica"));
 
         return t;
     };
@@ -75,7 +75,7 @@ public class TratamientoRepository {
 
         String sql = "INSERT INTO tratamiento ("
                 + "descripcion, "
-                + "id_consulta_medica"
+                + "id_consultamedica"
                 + ") VALUES ("
                 + ":descripcion, "
                 + ":idConsultaMedica"
@@ -97,7 +97,7 @@ public class TratamientoRepository {
 
         String sql = "UPDATE tratamiento "
                 + "SET descripcion = :descripcion, "
-                + "id_consulta_medica = :idConsultaMedica "
+                + "id_consultamedica = :idConsultaMedica "
                 + "WHERE id = :id";
 
         MapSqlParameterSource params = new MapSqlParameterSource()

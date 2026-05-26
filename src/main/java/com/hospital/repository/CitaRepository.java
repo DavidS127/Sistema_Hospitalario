@@ -144,4 +144,44 @@ public class CitaRepository {
 
         return namedJdbc.update(sql, params) > 0;
     }
+
+    // ─────────────────────────────────────────────────────────────
+    // FUNCIÓN DE NEGOCIO: Agendar cita con validaciones
+    //
+    // PROPÓSITO:
+    //   Llama a fn_agendar_cita en PostgreSQL, que valida todas las
+    //   reglas de negocio (médico activo, paciente activo, disponibilidad,
+    //   departamento correcto, fecha no pasada) y crea la cita.
+    //
+    // POR QUÉ queryForObject y no update:
+    //   La función PostgreSQL se invoca con SELECT y retorna el ID
+    //   de la cita creada. queryForObject ejecuta el SELECT y mapea
+    //   el único valor retornado a un Integer.
+    //
+    // MANEJO DE ERRORES:
+    //   Si fn_agendar_cita lanza un RAISE EXCEPTION, el driver JDBC
+    //   lo convierte en una DataAccessException. El controller la
+    //   captura y extrae el mensaje legible para retornarlo al cliente.
+    // ─────────────────────────────────────────────────────────────
+    public int agendarCita(Cita cita) {
+ 
+        String sql =
+            "SELECT fn_agendar_cita(" +
+            "  :idPaciente, " +
+            "  :idMedico, " +
+            "  :idDepartamento, " +
+            "  :fecha, " +
+            "  :hora" +
+            ")";
+ 
+        MapSqlParameterSource params = new MapSqlParameterSource()
+                .addValue("idPaciente",     cita.getIdPaciente())
+                .addValue("idMedico",       cita.getIdMedico())
+                .addValue("idDepartamento", cita.getIdDepartamento())
+                .addValue("fecha",          cita.getFecha())
+                .addValue("hora",           cita.getHora());
+ 
+        // queryForObject ejecuta el SELECT fn_... y retorna el INT que devuelve la función
+        return namedJdbc.queryForObject(sql, params, Integer.class);
+    }
 }

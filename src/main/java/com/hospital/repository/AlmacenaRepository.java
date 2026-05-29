@@ -37,9 +37,7 @@ public class AlmacenaRepository {
         return a;
     };
 
-    // =========================
     // LISTAR TODOS
-    // =========================
     public List<Almacena> findAll() {
 
         String sql = "SELECT * FROM almacena "
@@ -48,9 +46,7 @@ public class AlmacenaRepository {
         return jdbc.query(sql, almacenaMapper);
     }
 
-    // =========================
     // BUSCAR
-    // =========================
     public Optional<Almacena> findByIds(
             int idFarmacia,
             int idMedicamento) {
@@ -72,9 +68,7 @@ public class AlmacenaRepository {
         return resultados.stream().findFirst();
     }
 
-    // =========================
     // CREAR
-    // =========================
     public Almacena save(Almacena almacena) {
 
         String sql = "INSERT INTO almacena ("
@@ -97,9 +91,7 @@ public class AlmacenaRepository {
         return almacena;
     }
 
-    // =========================
     // ACTUALIZAR STOCK
-    // =========================
     public boolean update(
             int idFarmacia,
             int idMedicamento,
@@ -118,9 +110,7 @@ public class AlmacenaRepository {
         return namedJdbc.update(sql, params) > 0;
     }
 
-    // =========================
     // ELIMINAR
-    // =========================
     public boolean delete(
             int idFarmacia,
             int idMedicamento) {
@@ -135,4 +125,32 @@ public class AlmacenaRepository {
 
         return namedJdbc.update(sql, params) > 0;
     }
+
+    //Funcion fn_dispensar_medicamento para validar si hay stock suficiente 
+    //y actualizar el almacenado en caso de que se pueda dispensar el medicamento
+    public String dispensarMedicamento(
+        Integer idFarmacia,
+        Integer idMedicamento,
+        Integer cantidad) {
+
+    String sql = """
+        SELECT fn_dispensar_medicamento(
+            :idFarmacia,
+            :idMedicamento,
+            :cantidad
+        )
+    """;
+
+    MapSqlParameterSource params =
+            new MapSqlParameterSource()
+                    .addValue("idFarmacia", idFarmacia)
+                    .addValue("idMedicamento", idMedicamento)
+                    .addValue("cantidad", cantidad);
+
+    return namedJdbc.queryForObject(
+            sql,
+            params,
+            String.class
+    );
+}
 }

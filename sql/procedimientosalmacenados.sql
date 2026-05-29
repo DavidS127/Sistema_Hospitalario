@@ -111,3 +111,68 @@ BEGIN
     RETURN v_id_cita;
 END;
 $$;
+
+/*
+ FUNCIÓN: fn_dispensar_medicamento
+ 
+ PROPÓSITO:
+    Encapsula la lógica de negocio para dispensar un medicamento de forma segura.
+    Realiza todas las validaciones necesarias antes de actualizar el stock, y retorna
+    un mensaje indicando el resultado de la operación.
+	
+  CUÁNDO SE EJECUTA:
+    Cuando un personal administrativo dispensa un medicamento.
+	
+  RETORNA:
+    TEXT - Mensaje indicando el resultado de la operación.
+    Lanza EXCEPTION si alguna validación falla (el backend captura el mensaje).
+ */
+
+CREATE OR REPLACE FUNCTION fn_dispensar_medicamento(
+    p_id_farmacia INT,
+    p_id_medicamento INT,
+    p_cantidad INT
+)
+RETURNS TEXT
+LANGUAGE plpgsql
+AS $$
+DECLARE
+    stock_actual INT;
+BEGIN
+
+    -- VALIDAR QUE LA CANTIDAD SEA MAYOR A 0
+    IF p_cantidad <= 0 THEN
+        RAISE EXCEPTION 'La cantidad debe ser mayor a 0';
+    END IF;
+
+    -- OBTENER STOCK ACTUAL
+    SELECT stock
+    INTO stock_actual
+    FROM almacena
+    WHERE id_farmacia = p_id_farmacia
+      AND id_medicamento = p_id_medicamento;
+
+    -- VALIDAR EXISTENCIA DEL MEDICAMENTO EN FARMACIA
+    IF stock_actual IS NULL THEN
+        RAISE EXCEPTION
+        'El medicamento no existe en esta farmacia';
+    END IF;
+
+    -- VALIDAR STOCK SUFICIENTE
+    IF stock_actual < p_cantidad THEN
+        RAISE EXCEPTION
+        'Stock insuficiente. Stock actual: %',
+        stock_actual;
+    END IF;
+
+    -- ACTUALIZAR STOCK
+    UPDATE almacena
+    SET stock = stock - p_cantidad
+    WHERE id_farmacia = p_id_farmacia
+      AND id_medicamento = p_id_medicamento;
+
+    -- RESPUESTA EXITOSA
+    RETURN 'Medicamento dispensado correctamente';
+
+END;
+$$;

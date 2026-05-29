@@ -1,12 +1,14 @@
 package com.hospital.controller;
 
 import com.hospital.model.Almacena;
+import com.hospital.model.DispensarMedicamentoRequest;
 import com.hospital.repository.AlmacenaRepository;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/almacena")
@@ -74,5 +76,38 @@ public class AlmacenaController {
                 idMedicamento)
             ? ResponseEntity.noContent().build()
             : ResponseEntity.notFound().build();
+    }
+    
+    //almacena/dispensar (usa la función fn_dispensar_medicamento para validar si hay stock suficiente)
+    
+    @PostMapping("/dispensar")
+    public ResponseEntity<?> dispensarMedicamento(
+            @RequestBody DispensarMedicamentoRequest request) {
+
+        try {
+
+            String respuesta =
+                    almacenaRepo.dispensarMedicamento(
+                            request.getIdFarmacia(),
+                            request.getIdMedicamento(),
+                            request.getCantidad()
+                    );
+
+            return ResponseEntity.ok(
+                    Map.of(
+                            "mensaje",
+                            respuesta
+                    )
+            );
+
+        } catch (Exception e) {
+
+            return ResponseEntity.badRequest().body(
+                    Map.of(
+                            "error",
+                            e.getMessage()
+                    )
+            );
+        }
     }
 }

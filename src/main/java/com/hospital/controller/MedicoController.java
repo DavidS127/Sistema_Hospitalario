@@ -2,6 +2,7 @@ package com.hospital.controller;
 
 import com.hospital.model.dto.MedicoDTO;
 import com.hospital.repository.MedicoRepository;
+import com.hospital.model.dto.ResumenMedico;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -66,5 +67,12 @@ public class MedicoController {
         return medicoRepo.delete(id)
                 ? ResponseEntity.noContent().build()
                 : ResponseEntity.notFound().build();
+    }
+
+    //GET /medicos/resumen Obtener resumen de médicos con cantidad de cuántas consultas
+    //ha atendido y cuántas recetas ha generado
+    @GetMapping("/resumen")
+    public List<ResumenMedico> resumenMedicos() {
+        return medicoRepo.getResumenMedicos();
     }
 }

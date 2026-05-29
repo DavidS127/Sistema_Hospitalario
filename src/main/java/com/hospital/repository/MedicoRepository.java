@@ -1,6 +1,7 @@
 package com.hospital.repository;
 
 import com.hospital.model.dto.MedicoDTO;
+import com.hospital.model.dto.ResumenMedico;
 
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
@@ -312,5 +313,43 @@ public class MedicoRepository {
                 sql,
                 params) > 0;
     }
+    
+    public List<ResumenMedico> getResumenMedicos() {
+
+        String sql =
+            "SELECT " +
+            "    e.nombres || ' ' || e.apellidos AS medico, " +
+            "    med.especialidad, " +
+            "    d.nombre AS departamento, " +
+            "    resumen.total_consultas, " +
+            "    resumen.total_recetas " +
+            "FROM ( " +
+            "    SELECT " +
+            "        cm.id_medico, " +
+            "        COUNT(DISTINCT cm.id) AS total_consultas, " +
+            "        COUNT(DISTINCT r.id) AS total_recetas " +
+            "    FROM consulta_medica cm " +
+            "    LEFT JOIN receta r ON r.id_consultamedica = cm.id " +
+            "    GROUP BY cm.id_medico " +
+            ") AS resumen " +
+            "JOIN medico med ON resumen.id_medico = med.id_empleado " +
+            "JOIN empleado e ON med.id_empleado = e.id " +
+            "JOIN departamento d ON e.id_departamento = d.id " +
+            "ORDER BY resumen.total_consultas DESC";
+
+        return jdbc.query(sql, (rs, rowNum) -> {
+
+            ResumenMedico r = new ResumenMedico();
+
+            r.setMedico(rs.getString("medico"));
+            r.setEspecialidad(rs.getString("especialidad"));
+            r.setDepartamento(rs.getString("departamento"));
+            r.setTotalConsultas(rs.getInt("total_consultas"));
+            r.setTotalRecetas(rs.getInt("total_recetas"));
+
+            return r;
+        });
+    }
+
 }
 

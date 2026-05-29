@@ -1,6 +1,7 @@
 package com.hospital.repository;
 
 import com.hospital.model.Almacena;
+import com.hospital.model.dto.MedicamentoBajoStock;
 
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
@@ -36,6 +37,23 @@ public class AlmacenaRepository {
 
         return a;
     };
+
+    //RowMapper para el reporte de medicamentos bajo stock
+    private final RowMapper<MedicamentoBajoStock>
+                bajoStockMapper = (rs, rowNum) -> {
+        MedicamentoBajoStock m = new MedicamentoBajoStock();
+
+        m.setFarmacia(rs.getString("farmacia"));
+
+        m.setMedicamento(rs.getString("medicamento"));
+
+        m.setConcentracion(rs.getString("concentracion"));
+
+        m.setStockActual(rs.getInt("stock_actual"));
+
+        m.setStockPromedioGlobal(rs.getDouble("stock_promedio_global"));
+        return m;
+};
 
     // LISTAR TODOS
     public List<Almacena> findAll() {
@@ -133,24 +151,61 @@ public class AlmacenaRepository {
         Integer idMedicamento,
         Integer cantidad) {
 
-    String sql = """
-        SELECT fn_dispensar_medicamento(
-            :idFarmacia,
-            :idMedicamento,
-            :cantidad
-        )
-    """;
+        String sql = """
+                SELECT fn_dispensar_medicamento(
+                :idFarmacia,
+                :idMedicamento,
+                :cantidad
+                )
+        """;
 
-    MapSqlParameterSource params =
-            new MapSqlParameterSource()
-                    .addValue("idFarmacia", idFarmacia)
-                    .addValue("idMedicamento", idMedicamento)
-                    .addValue("cantidad", cantidad);
+        MapSqlParameterSource params =
+                new MapSqlParameterSource()
+                        .addValue("idFarmacia", idFarmacia)
+                        .addValue("idMedicamento", idMedicamento)
+                        .addValue("cantidad", cantidad);
 
-    return namedJdbc.queryForObject(
-            sql,
-            params,
-            String.class
-    );
-}
+        return namedJdbc.queryForObject(
+                sql,
+                params,
+                String.class);
+     }
+
+     public List<MedicamentoBajoStock>
+                getMedicamentosBajoStock() {
+
+        String sql = """
+                SELECT
+                f.nombre AS farmacia,
+                m.nombre AS medicamento,
+                m.concentracion,
+                a.stock AS stock_actual,
+
+                ROUND(
+                        (
+                        SELECT AVG(stock)
+                        FROM almacena
+                        ),
+                        2
+                ) AS stock_promedio_global
+
+                FROM almacena a
+
+                JOIN farmacia f
+                ON a.id_farmacia = f.id
+
+                JOIN medicamento m
+                ON a.id_medicamento = m.id
+
+                WHERE a.stock < (
+                SELECT AVG(stock)
+                FROM almacena
+                )
+
+                ORDER BY a.stock ASC
+        """;
+
+        return jdbc.query(sql, bajoStockMapper);
+     }
+
 }

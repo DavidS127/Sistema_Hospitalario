@@ -3,6 +3,7 @@ package com.hospital.controller;
 import com.hospital.model.Almacena;
 import com.hospital.model.DispensarMedicamentoRequest;
 import com.hospital.repository.AlmacenaRepository;
+import com.hospital.model.dto.MedicamentoBajoStock;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -79,7 +80,7 @@ public class AlmacenaController {
     }
     
     //almacena/dispensar (usa la función fn_dispensar_medicamento para validar si hay stock suficiente)
-    
+
     @PostMapping("/dispensar")
     public ResponseEntity<?> dispensarMedicamento(
             @RequestBody DispensarMedicamentoRequest request) {
@@ -109,5 +110,13 @@ public class AlmacenaController {
                     )
             );
         }
+    }
+
+    //almacena/bajo-stock para obtener medicamentos con stock actual menor al promedio global
+    @GetMapping("/bajo-stock")
+    public List<MedicamentoBajoStock>
+        medicamentosBajoStock() {
+
+        return almacenaRepo.getMedicamentosBajoStock();
     }
 }

@@ -1,6 +1,7 @@
 package com.hospital.repository;
 
 import com.hospital.model.Paciente;
+import com.hospital.model.dto.PacienteResumen;
 
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
@@ -158,5 +159,60 @@ public class PacienteRepository {
         MapSqlParameterSource params = new MapSqlParameterSource()
                 .addValue("id", id);
         return namedJdbc.update(sql, params) > 0;
+    }
+
+    //Listar todos los pacientes activos mostrando, para cada uno,
+    //la fecha de su última cita programada y cuántos medicamentos
+    //distintos se les han recetado en total
+    public List<PacienteResumen> getResumenPacientes() {
+
+        String sql =
+            "SELECT " +
+            " p.id, " +
+            " p.nombres || ' ' || p.apellidos AS paciente, " +
+            " p.eps, " +
+            " p.telefono, " +
+
+            " ( " +
+            "     SELECT MAX(c.fecha) " +
+            "     FROM cita c " +
+            "     WHERE c.id_paciente = p.id " +
+            "     AND c.estado NOT IN ('cancelada', 'no_asistio') " +
+            " ) AS ultima_cita, " +
+
+            " ( " +
+            "     SELECT COUNT(DISTINCT dr.id_medicamento) " +
+            "     FROM historia_clinica hc " +
+            "     JOIN evento ev ON ev.id_historiaclinica = hc.id " +
+            "     JOIN receta r ON r.id_consultamedica = ev.id_consultamedica " +
+            "     JOIN detalle_receta dr ON dr.id_receta = r.id " +
+            "     WHERE hc.id_paciente = p.id " +
+            " ) AS total_medicamentos_recetados " +
+
+            "FROM paciente p " +
+            "WHERE p.estado = 'activo' " +
+            "ORDER BY ultima_cita DESC NULLS LAST";
+
+        return jdbc.query(sql, (rs, rowNum) -> {
+
+            PacienteResumen pr = new PacienteResumen();
+
+            pr.setId(rs.getInt("id"));
+            pr.setPaciente(rs.getString("paciente"));
+            pr.setEps(rs.getString("eps"));
+            pr.setTelefono(rs.getString("telefono"));
+
+            if (rs.getDate("ultima_cita") != null) {
+                pr.setUltimaCita(
+                    rs.getDate("ultima_cita").toLocalDate()
+                );
+            }
+
+            pr.setTotalMedicamentosRecetados(
+                rs.getInt("total_medicamentos_recetados")
+            );
+
+            return pr;
+        });
     }
 }

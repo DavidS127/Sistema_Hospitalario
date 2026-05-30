@@ -1,6 +1,7 @@
 package com.hospital.controller;
 
 import com.hospital.model.Paciente;
+import com.hospital.model.dto.PacienteResumen;
 import com.hospital.repository.PacienteRepository;
 
 import org.springframework.http.ResponseEntity;
@@ -63,5 +64,11 @@ public class PacienteController {
         return pacienteRepo.delete(id)
                 ? ResponseEntity.noContent().build()
                 : ResponseEntity.notFound().build();
+    }
+
+    //GET /pacientes/resumen
+    @GetMapping("/resumen")
+    public List<PacienteResumen> resumenPacientes() {
+        return pacienteRepo.getResumenPacientes();
     }
 }

@@ -1,6 +1,7 @@
 package com.hospital.controller;
 
 import com.hospital.model.Cita;
+import com.hospital.model.dto.ReprogramarCitaRequest;
 import com.hospital.repository.CitaRepository;
 
 import org.springframework.http.ResponseEntity;
@@ -66,34 +67,13 @@ public class CitaController {
             : ResponseEntity.notFound().build();
     }
     
-    // ─────────────────────────────────────────────────────────────
-    // ENDPOINT DE NEGOCIO: POST /citas/agendar
-    //
-    // PROPÓSITO:
-    //   Agenda una cita pasando por todas las validaciones de negocio
-    //   definidas en fn_agendar_cita (PostgreSQL). Es diferente al
-    //   POST /citas básico, que inserta directo sin validaciones.
-    //
-    // REQUEST BODY (JSON):
-    // {
-    //   "idPaciente": 1,
-    //   "idMedico": 1,
-    //   "idDepartamento": 1,
-    //   "fecha": "2026-06-10",
-    //   "hora": "09:00:00"
-    // }
-    //
-    // RESPONSE 201 - Cita agendada correctamente:
-    // {
-    //   "idCita": 7,
-    //   "mensaje": "Cita agendada correctamente."
-    // }
-    //
-    // RESPONSE 400 - Alguna validación falló:
-    // {
-    //   "error": "El médico 1 ya tiene una cita programada el 2026-06-10 a las 09:00."
-    // }
-    // ─────────────────────────────────────────────────────────────
+    /*─────────────────────────────────────────────────────────────
+       ENDPOINT DE NEGOCIO: POST /citas/agendar
+
+       Agenda una cita pasando por todas las validaciones de negocio
+       definidas en fn_agendar_cita (PostgreSQL). Es diferente al
+       POST /citas básico, que inserta directo sin validaciones.
+    */
     @PostMapping("/agendar")
     public ResponseEntity<?> agendarCita(@RequestBody Cita cita) {
         try {
@@ -117,14 +97,29 @@ public class CitaController {
         }
     }
  
+    // PUT /citas/{id}/reprogramar — transacción BEGIN/COMMIT/ROLLBACK
+    
+    @PutMapping("/{id}/reprogramar")
+    public ResponseEntity<?> reprogramarCita(
+            @PathVariable int id,
+            @RequestBody ReprogramarCitaRequest request) {
+ 
+        try {
+            request.setIdCitaOriginal(id);
+            Map<String, Object> resultado = citaRepo.reprogramarCita(request);
+            return ResponseEntity.ok(resultado);
+ 
+        } catch (Exception e) {
+            // ROLLBACK ejecutado en PostgreSQL — cita original intacta
+            return ResponseEntity.status(400)
+                .body(Map.of("error", extraerMensajePgSql(e.getMessage())));
+        }
+    }
+
     /*
      * MÉTODO AUXILIAR: extraerMensajePgSql
-     *
      * El driver JDBC envuelve el mensaje del RAISE EXCEPTION con texto
      * adicional de PostgreSQL. Este método extrae solo la parte legible.
-     *
-     * Ejemplo raw: "ERROR: El médico 1 ya tiene una cita...\n  Where: PL/pgSQL..."
-     * Resultado:   "El médico 1 ya tiene una cita..."
      */
     private String extraerMensajePgSql(String mensajeCompleto) {
         if (mensajeCompleto == null) return "Error desconocido en el servidor.";

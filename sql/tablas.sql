@@ -152,3 +152,22 @@ CREATE TABLE almacena (
     stock INTEGER DEFAULT 0,
     PRIMARY KEY (id_farmacia, id_medicamento)
 );
+
+-- ÍNDICE 1: paciente(numero_documento)
+-- Motivo: La búsqueda de pacientes por número de documento es
+-- una de las operaciones más frecuentes en recepción, admisiones
+-- y consulta médica. Al indexar numero_documento
+-- se acelera significativamente la localización del registro.
+
+CREATE INDEX idx_paciente_numero_documento
+    ON paciente(numero_documento);
+ 
+-- ÍNDICE 2: cita(id_paciente)
+-- Motivo: El historial de citas de un paciente se consulta
+-- constantemente (al atender una cita, al programar una nueva,
+-- o al revisar el historial). Indexar id_paciente en la tabla
+-- cita evita escanear todas las citas para filtrar las de un
+-- paciente específico.
+
+CREATE INDEX idx_cita_id_paciente
+    ON cita(id_paciente);

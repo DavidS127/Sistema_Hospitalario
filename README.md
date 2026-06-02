@@ -42,7 +42,7 @@ El backend está desarrollado en **Java con Spring Boot** y la base de datos en
 
 ## 🗄️ Diagrama Entidad-Relación
 
-![Diagrama ER](./docs/diagrama_er.png)
+<img width="1440" height="638" alt="image" src="https://github.com/user-attachments/assets/d337bda5-be06-4daa-be60-e79db6d48351" />
 
 ---
 
@@ -57,27 +57,8 @@ El backend está desarrollado en **Java con Spring Boot** y la base de datos en
 
 ---
 
-## 📁 Estructura del Repositorio
-Sistema_Hospitalario/
-│
-├── sql/
-│   ├── tablas.sql                    # Creación de todas las tablas
-│   ├── inserts.sql                   # Datos de prueba
-│   ├── procedimientosalmacenados.sql # Procedimientos almacenados
-│   ├── triggers.sql                  # Triggers del sistema
-│   └── views.sql                     # Vistas definidas
-│
-├── src/
-│   └── main/
-│       ├── java/com/hospital/
-│       │   ├── controller/           # Controladores REST
-│       │   ├── model/                # Entidades del dominio
-│       │   ├── repository/           # Acceso a datos (JPA)
-│       │   └── HospitalApplication.java
-│       └── resources/                # Configuración (application.properties)
-│
-├── pom.xml                           # Dependencias Maven
-└── README.md
+<img width="1220" height="599" alt="image" src="https://github.com/user-attachments/assets/b4ee2ac4-94ee-4627-aadc-c3f930377508" />
+
 ## 📦 Requisitos Previos
 
 - Java 17+

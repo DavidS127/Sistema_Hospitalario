@@ -1,4 +1,4 @@
-/* =====================================================================
+/* 
  * VISTAS DEL SISTEMA HOSPITALARIO
  *
  * Se definen 3 vistas que simplifican consultas complejas con JOINs.
@@ -7,10 +7,9 @@
  * VISTA 1: vw_detalle_cita        → info completa de citas (paciente + médico + depto)
  * VISTA 2: vw_historial_paciente  → historial clínico completo por paciente
  * VISTA 3: vw_inventario_farmacia → estado del inventario con alertas de stock
- * ===================================================================== */
+ */
 
-
-/* =====================================================================
+/* 
  * VISTA 1: vw_detalle_cita
  *
  * PROPÓSITO:
@@ -26,7 +25,8 @@
  *   - Agenda del día de un médico
  *   - Listado de citas de un paciente
  *   - Panel administrativo de citas por departamento
- * ===================================================================== */
+ */
+
 CREATE OR REPLACE VIEW vw_detalle_cita AS
 SELECT
     c.id                                        AS id_cita,
@@ -58,8 +58,7 @@ JOIN medico       med ON c.id_medico       = med.id_empleado
 JOIN empleado     e   ON med.id_empleado   = e.id
 JOIN departamento d   ON c.id_departamento = d.id;
 
-
-/* =====================================================================
+/* 
  * VISTA 2: vw_historial_paciente
  *
  * PROPÓSITO:
@@ -75,7 +74,8 @@ JOIN departamento d   ON c.id_departamento = d.id;
  *   - Ver el historial completo de un paciente filtrado por su ID
  *   - Reporte médico de evolución del paciente
  *   - Auditoría clínica
- * ===================================================================== */
+ */
+
 CREATE OR REPLACE VIEW vw_historial_paciente AS
 SELECT
     -- Datos del paciente
@@ -122,8 +122,7 @@ LEFT JOIN departamento    d   ON cm.id_departamento  = d.id
 LEFT JOIN receta          r   ON r.id_consultamedica = cm.id
 ORDER BY p.id, ev.fecha DESC, ev.hora DESC;
 
-
-/* =====================================================================
+/* 
  * VISTA 3: vw_inventario_farmacia
  *
  * PROPÓSITO:
@@ -144,7 +143,8 @@ ORDER BY p.id, ev.fecha DESC, ev.hora DESC;
  *   - Panel de inventario del farmacéutico
  *   - Reporte de medicamentos críticos para reabastecimiento
  *   - Validación previa a dispensar una receta
- * ===================================================================== */
+ */
+
 CREATE OR REPLACE VIEW vw_inventario_farmacia AS
 SELECT
     -- Datos de la farmacia
@@ -180,9 +180,9 @@ ORDER BY
     f.nombre, m.nombre;
 
 
-/* =====================================================================
+/* 
  * EJEMPLOS DE USO DIRECTO EN SQL
- * ===================================================================== */
+ */
 
 -- Vista 1: citas del día de hoy
 SELECT * FROM vw_detalle_cita

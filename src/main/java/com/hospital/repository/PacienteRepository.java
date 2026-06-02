@@ -161,9 +161,14 @@ public class PacienteRepository {
         return namedJdbc.update(sql, params) > 0;
     }
 
-    //Listar todos los pacientes activos mostrando, para cada uno,
-    //la fecha de su última cita programada y cuántos medicamentos
-    //distintos se les han recetado en total
+    /**
+    * Obtiene un resumen de todos los pacientes activos del sistema,
+    * incluyendo su última cita válida y el total de medicamentos
+    * distintos que se les han recetado a lo largo de su historial.
+    *
+    * Útil para reportes de seguimiento clínico y gestión de pacientes.
+    */
+
     public List<PacienteResumen> getResumenPacientes() {
 
         String sql =
@@ -173,6 +178,10 @@ public class PacienteRepository {
             " p.eps, " +
             " p.telefono, " +
 
+            // Subconsulta escalar: obtiene la fecha de la última cita
+            // válida del paciente (excluye canceladas y no asistidas).
+            // Retorna NULL si el paciente no tiene citas registradas.
+
             " ( " +
             "     SELECT MAX(c.fecha) " +
             "     FROM cita c " +
@@ -180,6 +189,12 @@ public class PacienteRepository {
             "     AND c.estado NOT IN ('cancelada', 'no_asistio') " +
             " ) AS ultima_cita, " +
 
+            // Subconsulta escalar: cuenta los medicamentos DISTINTOS
+            // recetados al paciente en toda su historia clínica.
+            // Recorre la cadena: historia_clinica → evento → receta → detalle_receta
+            // COUNT(DISTINCT) evita contar el mismo medicamento
+            // si fue recetado en múltiples consultas.
+            
             " ( " +
             "     SELECT COUNT(DISTINCT dr.id_medicamento) " +
             "     FROM historia_clinica hc " +

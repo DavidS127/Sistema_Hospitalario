@@ -314,6 +314,14 @@ public class MedicoRepository {
                 params) > 0;
     }
     
+    /*
+    * Obtiene un resumen estadístico de todos los médicos del sistema,
+    * mostrando cuántas consultas y recetas ha generado cada uno.
+    *
+    * Útil para reportes administrativos y seguimiento de productividad
+    * médica por departamento.
+    */
+
     public List<ResumenMedico> getResumenMedicos() {
 
         String sql =
@@ -323,6 +331,12 @@ public class MedicoRepository {
             "    d.nombre AS departamento, " +
             "    resumen.total_consultas, " +
             "    resumen.total_recetas " +
+            
+            // Subconsulta derivada: agrupa por médico y cuenta
+            // sus consultas y recetas de forma independiente.
+            // Se usa LEFT JOIN con receta para incluir médicos
+            // que tienen consultas pero no han emitido recetas (contarían 0).
+            
             "FROM ( " +
             "    SELECT " +
             "        cm.id_medico, " +

@@ -171,6 +171,14 @@ public class AlmacenaRepository {
                 String.class);
      }
 
+      /* 
+      * Recupera los medicamentos cuyo stock actual está por debajo
+      * del promedio global de stock entre todas las farmacias.
+      *
+      * Útil para identificar medicamentos críticos que requieren
+      * reabastecimiento prioritario.
+      */ 
+
      public List<MedicamentoBajoStock>
                 getMedicamentosBajoStock() {
 
@@ -180,6 +188,14 @@ public class AlmacenaRepository {
                 m.nombre AS medicamento,
                 m.concentracion,
                 a.stock AS stock_actual,
+                
+                /*
+                 * Subconsulta escalar: calcula el promedio global de stock
+                 * considerando TODOS los registros de la tabla almacena,
+                 * sin importar farmacia ni medicamento.
+                 * Se redondea a 2 decimales para mejor legibilidad.
+                 * Se repite más abajo en el WHERE con el mismo propósito.
+                 */
 
                 ROUND(
                         (
@@ -196,6 +212,13 @@ public class AlmacenaRepository {
 
                 JOIN medicamento m
                 ON a.id_medicamento = m.id
+
+                /*
+                * Subconsulta de filtro: solo incluye registros cuyo stock
+                * esté por debajo del promedio global. Esto identifica los
+                * medicamentos que están en niveles por debajo de lo normal
+                * en el sistema.
+                */
 
                 WHERE a.stock < (
                 SELECT AVG(stock)

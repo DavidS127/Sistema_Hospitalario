@@ -1,11 +1,10 @@
--- =============================================
 -- INSERTS - SISTEMA HOSPITALARIO
 -- Orden: respeta las claves foráneas
--- =============================================
 
--- =============================================
+
+
 -- 1. DEPARTAMENTO (sin dependencias)
--- =============================================
+
 INSERT INTO departamento (id, nombre, telefono, ubicacion) VALUES
 (1, 'Urgencias', '3001112233', 'Piso 1 - Ala Norte'),
 (2, 'Cardiología', '3002223344', 'Piso 2 - Ala Sur'),
@@ -108,9 +107,8 @@ INSERT INTO departamento (id, nombre, telefono, ubicacion) VALUES
 (99, 'Nanotecnología Médica', '3099990011', 'Piso 21 - Ala Oeste'),
 (100, 'Telemedicina', '3100001122', 'Piso 22 - Ala Norte');
 
--- =============================================
 -- 2. FARMACIA (sin dependencias)
--- =============================================
+
 INSERT INTO farmacia (nombre, estado, ubicacion, telefono) VALUES
 ('Farmacia Central', 'activa', 'Piso 1 - Ala Norte', '3101112233'),
 ('Farmacia Urgencias', 'activa', 'Piso 1 - Ala Sur', '3102223344'),
@@ -212,9 +210,8 @@ INSERT INTO farmacia (nombre, estado, ubicacion, telefono) VALUES
 ('Farmacia Hematología 2', 'activa', 'Piso 6 - Ala Oeste B', '3198889900'),
 ('Farmacia Cirugía General 2', 'activa', 'Piso 6 - Ala Este B', '3199990011');
 
--- =============================================
 -- 3. PACIENTE (sin dependencias)
--- =============================================
+
 INSERT INTO paciente (tipo_documento, numero_documento, nombres, apellidos, fecha_nacimiento, sexo, grupo_sanguineo, telefono, correo, direccion, eps, estado) VALUES
 ('CC', '10000001', 'Carlos', 'García López', '1985-03-15', 'M', 'O+', '3001234501', 'carlos1@email.com', 'Calle 1 #10-1', 'Sura', 'activo'),
 ('CC', '10000002', 'María', 'Rodríguez Pérez', '1990-07-22', 'F', 'A+', '3001234502', 'maria2@email.com', 'Calle 2 #10-2', 'Compensar', 'activo'),
@@ -317,9 +314,8 @@ INSERT INTO paciente (tipo_documento, numero_documento, nombres, apellidos, fech
 ('CC', '10000099', 'Wilmar', 'Pardo Castellanos', '1993-03-18', 'M', 'B+', '3001234599', 'wilmar99@email.com', 'Calle 99 #10-99', 'Sanitas', 'activo'),
 ('CC', '10000100', 'Nancy', 'Castellanos Ibáñez', '1980-07-10', 'F', 'AB+', '3001234600', 'nancy100@email.com', 'Calle 100 #10-100', 'Nueva EPS', 'activo');
 
--- =============================================
 -- 4. EMPLEADO (depende de departamento)
--- =============================================
+
 INSERT INTO empleado (tipo_documento, numero_documento, nombres, apellidos, fecha_nacimiento, telefono, correo, direccion, estado, id_departamento) VALUES
 ('CC', '20000001', 'Pedro', 'Ramírez Cano', '1975-03-10', '3201234501', 'pedro.emp1@hospital.com', 'Carrera 1 #20-1', 'activo', 1),
 ('CC', '20000002', 'Lucía', 'Torres Medina', '1980-07-22', '3201234502', 'lucia.emp2@hospital.com', 'Carrera 2 #20-2', 'activo', 2),
@@ -422,9 +418,8 @@ INSERT INTO empleado (tipo_documento, numero_documento, nombres, apellidos, fech
 ('CC', '20000099', 'Darío', 'Duarte Estupiñán', '1975-10-18', '3201234599', 'dario.emp99@hospital.com', 'Carrera 99 #20-99', 'activo', 9),
 ('CC', '20000100', 'Elena', 'Estupiñán Fonseca', '1991-02-10', '3201234600', 'elena.emp100@hospital.com', 'Carrera 100 #20-100', 'activo', 10);
 
--- =============================================
 -- 5. MEDICO (depende de empleado)
--- =============================================
+
 INSERT INTO medico (id_empleado, especialidad, registro_medico) VALUES
 (1, 'Urgencias', 'RM-00001'),
 (2, 'Cardiología', 'RM-00002'),
@@ -535,25 +530,8 @@ INSERT INTO administrativo (id_empleado, area) VALUES
 (99, 'Coordinacion'),
 (100, 'Capacitacion');
 
--- =============================================
--- 6. FARMACEUTICO (depende de empleado y farmacia)
--- =============================================
--- Usamos empleados que NO son médicos (no están en tabla medico).
--- Como todos del 1-100 son médicos, no podemos insertar farmacéuticos
--- sin más empleados. Se dejan comentados para evitar error de FK.
--- Si tu proyecto tiene más empleados, descomenta y ajusta los ids.
--- INSERT INTO farmaceutico ...
-
--- =============================================
--- 7. ADMINISTRATIVO (depende de empleado)
--- =============================================
--- Misma situación: los empleados 1-100 están en medico.
--- Se dejan comentados para evitar error de FK.
--- INSERT INTO administrativo ...
-
--- =============================================
 -- 8. MEDICAMENTO (sin dependencias)
--- =============================================
+
 INSERT INTO medicamento (nombre, concentracion, via_administracion, forma_farmaceutica) VALUES
 ('Acetaminofén', '500mg', 'Oral', 'Tableta'),
 ('Ibuprofeno', '400mg', 'Oral', 'Tableta'),
@@ -656,9 +634,8 @@ INSERT INTO medicamento (nombre, concentracion, via_administracion, forma_farmac
 ('Litio', '250', 'Oral', 'Tableta'),
 ('Bupropión', '180', 'Oral', 'Tableta');
 
--- =============================================
 -- 9. HISTORIA CLINICA (depende de paciente)
--- =============================================
+
 INSERT INTO historia_clinica (estado, id_paciente) VALUES
 ('activa', 1), ('activa', 2), ('activa', 3), ('activa', 4), ('activa', 5),
 ('activa', 6), ('activa', 7), ('activa', 8), ('activa', 9), ('activa', 10),
@@ -681,9 +658,8 @@ INSERT INTO historia_clinica (estado, id_paciente) VALUES
 ('activa', 91), ('activa', 92), ('activa', 93), ('activa', 94), ('activa', 95),
 ('activa', 96), ('activa', 97), ('activa', 98), ('activa', 99), ('activa', 100);
 
--- =============================================
 -- 10. CONSULTA MEDICA (depende de medico y departamento)
--- =============================================
+
 INSERT INTO consulta_medica (motivo_consulta, tipo_consulta, id_medico, id_departamento) VALUES
 ('Dolor de cabeza persistente', 'primera vez', 1, 1),
 ('Control hipertensión', 'control', 2, 2),
@@ -786,9 +762,8 @@ INSERT INTO consulta_medica (motivo_consulta, tipo_consulta, id_medico, id_depar
 ('Cardiología insuficiencia', 'control', 9, 9),
 ('Pediatría desarrollo', 'control', 10, 10);
 
--- =============================================
 -- 11. CITA (depende de paciente, departamento, medico, consulta_medica)
--- =============================================
+
 INSERT INTO cita (fecha, hora, estado, id_paciente, id_departamento, id_medico, id_consultamedica) VALUES
 ('2026-01-05', '08:00', 'atendida', 1, 1, 1, 1),
 ('2026-01-06', '09:00', 'atendida', 2, 2, 2, 2),
@@ -891,9 +866,8 @@ INSERT INTO cita (fecha, hora, estado, id_paciente, id_departamento, id_medico, 
 ('2026-05-19', '11:30', 'programada', 99, 9, 9, 99),
 ('2026-05-20', '12:30', 'programada', 100, 10, 10, 100);
 
--- =============================================
 -- 12. RECETA (depende de consulta_medica)
--- =============================================
+
 INSERT INTO receta (id_consultamedica) VALUES
 (1),(2),(3),(4),(5),(6),(7),(8),(9),(10),
 (11),(12),(13),(14),(15),(16),(17),(18),(19),(20),
@@ -906,9 +880,8 @@ INSERT INTO receta (id_consultamedica) VALUES
 (81),(82),(83),(84),(85),(86),(87),(88),(89),(90),
 (91),(92),(93),(94),(95),(96),(97),(98),(99),(100);
 
--- =============================================
 -- 13. DETALLE RECETA (depende de receta y medicamento)
--- =============================================
+
 INSERT INTO detalle_receta (id_receta, id_medicamento, dosis, frecuencia, duracion) VALUES
 (1,1,'500mg','Cada 8 horas','5 días'),
 (2,2,'400mg','Cada 12 horas','7 días'),
@@ -1011,9 +984,8 @@ INSERT INTO detalle_receta (id_receta, id_medicamento, dosis, frecuencia, duraci
 (99,99,'1mg','Una vez al noche','indefinido'),
 (100,100,'150mg','Una vez al día','indefinido');
 
--- =============================================
 -- 14. PROCEDIMIENTO (depende de consulta_medica)
--- =============================================
+
 INSERT INTO procedimiento (nombre, id_consultamedica) VALUES
 ('Electrocardiograma', 1), ('Ecocardiograma', 2), ('Radiografía de tórax', 3),
 ('Tomografía computarizada', 4), ('Resonancia magnética', 5), ('Ecografía abdominal', 6),
@@ -1050,9 +1022,8 @@ INSERT INTO procedimiento (nombre, id_consultamedica) VALUES
 ('Safenectomía', 97), ('Amigdalectomía', 98), ('Adenoidectomía', 99),
 ('Septoplastia', 100);
 
--- =============================================
 -- 15. TRATAMIENTO (depende de consulta_medica)
--- =============================================
+
 INSERT INTO tratamiento (descripcion, id_consultamedica) VALUES
 ('Reposo absoluto por 48 horas y control de signos vitales', 1),
 ('Dieta hiposódica e hipocalórica estricta', 2),
@@ -1155,9 +1126,8 @@ INSERT INTO tratamiento (descripcion, id_consultamedica) VALUES
 ('Sacubitril/valsartán y diurético de asa', 99),
 ('Vacunas según calendario pediátrico y control desarrollo', 100);
 
--- =============================================
 -- 16. EQUIPAMIENTO (depende de departamento)
--- =============================================
+
 INSERT INTO equipamiento (nombre, estado, id_departamento) VALUES
 ('Monitor cardíaco', 'activo', 1), ('Desfibrilador', 'activo', 1),
 ('Respirador mecánico', 'activo', 2), ('Ecógrafo', 'activo', 2),
@@ -1209,9 +1179,8 @@ INSERT INTO equipamiento (nombre, estado, id_departamento) VALUES
 ('Ecocardiógrafo pediátrico', 'activo', 48), ('Catéter cardíaco pediátrico', 'activo', 48),
 ('Bomba de quimioterapia pediátrica', 'activo', 49), ('Cámara de aislamiento pediátrico', 'activo', 49);
 
--- =============================================
 -- 17. ALMACENA (depende de farmacia y medicamento)
--- =============================================
+
 INSERT INTO almacena (id_farmacia, id_medicamento, stock) VALUES
 (1,1,500),(1,2,300),(1,3,250),(1,4,400),(1,5,200),
 (1,6,350),(1,7,280),(1,8,320),(1,9,150),(1,10,100),
@@ -1234,9 +1203,8 @@ INSERT INTO almacena (id_farmacia, id_medicamento, stock) VALUES
 (10,86,200),(10,87,180),(10,88,160),(10,89,140),(10,90,120),
 (10,91,100),(10,92,80),(10,93,60),(10,94,40),(10,95,20);
 
--- =============================================
 -- 18. EVENTO (depende de historia_clinica, departamento, medico, consulta_medica)
--- =============================================
+
 INSERT INTO evento (fecha, hora, tipo, descripcion, id_historiaclinica, id_departamento, id_medico, id_consultamedica) VALUES
 ('2026-01-05','08:30','consulta','Evaluación inicial de urgencias',1,1,1,1),
 ('2026-01-06','09:30','control','Control cardiológico mensual',2,2,2,2),
